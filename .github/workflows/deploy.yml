@@ -84,12 +84,10 @@ jobs:
     # ----------------------------
     - name: Deploy to Azure Web App
       run: |
-        az webapp deploy \
-          --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
-          --name ${{ vars.AZURE_WEBAPP_NAME }} \
-          --src-path ${{ env.PUBLISH_DIR }} \
-          --type zip
-
+         dotnet publish src/SampleWebApp/SampleWebApp.csproj \
+         --configuration Release \
+         --no-build \
+         --output publish
     # ----------------------------
     # App Settings (Environment + Secrets)
     # ----------------------------
