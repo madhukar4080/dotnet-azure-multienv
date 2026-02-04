@@ -82,12 +82,13 @@ jobs:
     # ----------------------------
     # Deploy using Azure CLI
     # ----------------------------
-    - name: Deploy to Azure Web App
+    - name: Publish
       run: |
-         dotnet publish src/SampleWebApp/SampleWebApp.csproj \
-         --configuration Release \
-         --no-build \
-         --output publish
+        dotnet publish src/SampleWebApp/SampleWebApp.csproj \
+        --configuration Release \
+        --no-build \
+        --output publish
+
     # ----------------------------
     # App Settings (Environment + Secrets)
     # ----------------------------
