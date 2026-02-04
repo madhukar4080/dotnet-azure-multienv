@@ -5,6 +5,8 @@ on:
     branches:
       - main
 
+workflow_dispatch:      
+
 env:
   DOTNET_VERSION: '8.0.x'
   PROJECT_PATH: src/SampleWebApp/SampleWebApp.csproj
