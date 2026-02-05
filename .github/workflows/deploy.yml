@@ -70,10 +70,9 @@ jobs:
     # Publish
     # ----------------------------
     - name: Publish
-      run: dotnet publish ${{ env.PROJECT_PATH }} \
-            --configuration Release \
-            --no-build \
-            --output ${{ env.PUBLISH_DIR }}
+      run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ${{ env.PUBLISH_DIR }}
+
+
 
     # ----------------------------
     # Deploy using Azure CLI
