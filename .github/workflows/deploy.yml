@@ -89,10 +89,11 @@ jobs:
     # App Settings (Environment + Secrets)
     # ----------------------------
     - name: Configure App Settings
+      shell: pwsh
       run: |
-        az webapp config appsettings set \
-          --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
-          --name ${{ vars.AZURE_WEBAPP_NAME }} \
-          --settings \
-            ASPNETCORE_ENVIRONMENT=${{ matrix.environment == 'dev' && 'Development' || matrix.environment == 'qa' && 'QA' || 'UAT' }} \
+        az webapp config appsettings set `
+          --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} `
+          --name ${{ vars.AZURE_WEBAPP_NAME }} `
+          --settings `
+            ASPNETCORE_ENVIRONMENT=${{ matrix.environment == 'dev' && 'Development' || matrix.environment == 'qa' && 'QA' || 'UAT' }} `
             MY_SECRET=${{ secrets.MY_SECRET }}
