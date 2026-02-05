@@ -1,0 +1,93 @@
+name: Build & Deploy .NET App (Dev / QA / UAT)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ vars.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build application
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Publish application
+        run: dotnet publish -c Release -o publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: publish
+
+  deploy-dev:
+    needs: build
+    runs-on: windows-latest
+    environment: dev
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: >
+            {
+              "clientId": "${{ vars.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ vars.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ vars.AZURE_SUBSCRIPTION_ID }}"
+            }
+
+      - name: Deploy to Azure Web App (DEV)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          package: .
+
+  deploy-qa:
+    needs: deploy-dev
+    runs-on: windows-latest
+    environment: qa
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: >
+            {
+              "clientId": "${{ vars.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ vars.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ vars.AZURE_SUBSCRIPTION_ID }}"
+            }
+
+      - name: Deploy to Azure Web App (QA)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          package: .
+
+  
